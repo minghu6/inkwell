@@ -1068,9 +1068,17 @@ impl<'ctx> ContextRef<'ctx> {
         }
     }
 
+    ///
+    /// pub access new function
+    pub fn new2() -> Self {
+        Self {
+            context: ManuallyDrop::new(Context::create()),
+            _marker: PhantomData,
+        }
+    }
+
     /// Gets a usable context object with a correct lifetime.
     // FIXME: Not safe :(
-    #[cfg(feature = "experimental")]
     pub unsafe fn get(&self) -> &'ctx Context {
         // Safety: Although strictly untrue that a local reference to the context field
         // is guaranteed to live for the entirety of 'ctx:

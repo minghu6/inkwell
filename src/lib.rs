@@ -10,6 +10,7 @@
 
 #![deny(missing_debug_implementations)]
 #![cfg_attr(feature = "nightly", feature(doc_cfg))]
+#![allow(warnings)]
 
 #[macro_use]
 extern crate inkwell_internals;
