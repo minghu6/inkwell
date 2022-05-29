@@ -106,8 +106,8 @@ impl<'ctx> Builder<'ctx> {
         }
     }
 
-    /// Builds a function call instruction. 
-    /// [`FunctionValue`]s can be implicitly converted into a [`CallableValue`]. 
+    /// Builds a function call instruction.
+    /// [`FunctionValue`]s can be implicitly converted into a [`CallableValue`].
     /// See [`CallableValue`] for details on calling a [`PointerValue`] that points to a function.
     ///
     /// [`FunctionValue`]: crate::values::FunctionValue
@@ -178,7 +178,7 @@ impl<'ctx> Builder<'ctx> {
     /// [`add_prune_eh_pass`]: crate::passes::PassManager::add_prune_eh_pass
     ///
     /// This example catches C++ exceptions of type `int`, and returns `0` if an exceptions is thrown.
-    /// For usage of a cleanup landing pad and the `resume` instruction, see [`Builder::build_resume`] 
+    /// For usage of a cleanup landing pad and the `resume` instruction, see [`Builder::build_resume`]
     /// ```no_run
     /// use inkwell::context::Context;
     /// use inkwell::AddressSpace;
@@ -283,19 +283,19 @@ impl<'ctx> Builder<'ctx> {
         }
     }
 
-    /// Landing pads are places where control flow jumps to if a [`Builder::build_invoke`] triggered an exception. 
+    /// Landing pads are places where control flow jumps to if a [`Builder::build_invoke`] triggered an exception.
     /// The landing pad will match the exception against its *clauses*. Depending on the clause
-    /// that is matched, the exception can then be handled, or resumed after some optional cleanup, 
+    /// that is matched, the exception can then be handled, or resumed after some optional cleanup,
     /// causing the exception to bubble up.
-    /// 
+    ///
     /// Exceptions in LLVM are designed based on the needs of a C++ compiler, but can be used more generally.
     /// Here are some specific examples of landing pads. For a full example of handling an exception, see [`Builder::build_invoke`].
-    /// 
+    ///
     /// * **cleanup**: a cleanup landing pad is always visited when unwinding the stack.
-    ///   A cleanup is extra code that needs to be run when unwinding a scope. C++ destructors are a typical example. 
+    ///   A cleanup is extra code that needs to be run when unwinding a scope. C++ destructors are a typical example.
     ///   In a language with reference counting, the cleanup block can decrement the refcount of values in scope.
     ///   The [`Builder::build_resume`] function has a full example using a cleanup lading pad.
-    /// 
+    ///
     /// ```no_run
     /// use inkwell::context::Context;
     /// use inkwell::AddressSpace;
@@ -304,12 +304,12 @@ impl<'ctx> Builder<'ctx> {
     /// let context = Context::create();
     /// let module = context.create_module("sum");
     /// let builder = context.create_builder();
-    /// 
+    ///
     /// // type of an exception in C++
     /// let i8_ptr_type = context.i8_type().ptr_type(AddressSpace::Generic);
     /// let i32_type = context.i32_type();
     /// let exception_type = context.struct_type(&[i8_ptr_type.into(), i32_type.into()], false);
-    /// 
+    ///
     /// // the personality function used by C++
     /// let personality_function = {
     ///     let name = "__gxx_personality_v0";
@@ -317,14 +317,14 @@ impl<'ctx> Builder<'ctx> {
     ///
     ///     module.add_function(name, context.i64_type().fn_type(&[], false), linkage)
     /// };
-    /// 
+    ///
     /// // make the cleanup landing pad
     /// let res = builder.build_landing_pad( exception_type, personality_function, &[], true, "res");
     /// ```
-    /// 
-    /// * **catch all**: An implementation of the C++ `catch(...)`, which catches all exceptions. 
+    ///
+    /// * **catch all**: An implementation of the C++ `catch(...)`, which catches all exceptions.
     /// A catch clause with a NULL pointer value will match anything.
-    /// 
+    ///
     /// ```no_run
     /// use inkwell::context::Context;
     /// use inkwell::AddressSpace;
@@ -333,12 +333,12 @@ impl<'ctx> Builder<'ctx> {
     /// let context = Context::create();
     /// let module = context.create_module("sum");
     /// let builder = context.create_builder();
-    /// 
+    ///
     /// // type of an exception in C++
     /// let i8_ptr_type = context.i8_type().ptr_type(AddressSpace::Generic);
     /// let i32_type = context.i32_type();
     /// let exception_type = context.struct_type(&[i8_ptr_type.into(), i32_type.into()], false);
-    /// 
+    ///
     /// // the personality function used by C++
     /// let personality_function = {
     ///     let name = "__gxx_personality_v0";
@@ -346,16 +346,16 @@ impl<'ctx> Builder<'ctx> {
     ///
     ///     module.add_function(name, context.i64_type().fn_type(&[], false), linkage)
     /// };
-    /// 
+    ///
     /// // make a null pointer of type i8
     /// let null = i8_ptr_type.const_zero();
-    /// 
+    ///
     /// // make the catch all landing pad
     /// let res = builder.build_landing_pad(exception_type, personality_function, &[null.into()], false, "res");
     /// ```
-    /// 
+    ///
     /// * **catch a type of exception**: Catch a specific type of exception. The example uses C++'s type info.
-    /// 
+    ///
     /// ```no_run
     /// use inkwell::context::Context;
     /// use inkwell::module::Linkage;
@@ -365,12 +365,12 @@ impl<'ctx> Builder<'ctx> {
     /// let context = Context::create();
     /// let module = context.create_module("sum");
     /// let builder = context.create_builder();
-    /// 
+    ///
     /// // type of an exception in C++
     /// let i8_ptr_type = context.i8_type().ptr_type(AddressSpace::Generic);
     /// let i32_type = context.i32_type();
     /// let exception_type = context.struct_type(&[i8_ptr_type.into(), i32_type.into()], false);
-    /// 
+    ///
     /// // the personality function used by C++
     /// let personality_function = {
     ///     let name = "__gxx_personality_v0";
@@ -378,19 +378,19 @@ impl<'ctx> Builder<'ctx> {
     ///
     ///     module.add_function(name, context.i64_type().fn_type(&[], false), linkage)
     /// };
-    /// 
+    ///
     /// // link in the C++ type info for the `int` type
     /// let type_info_int = module.add_global(i8_ptr_type, Some(AddressSpace::Generic), "_ZTIi");
     /// type_info_int.set_linkage(Linkage::External);
-    /// 
+    ///
     /// // make the catch landing pad
     /// let clause = type_info_int.as_basic_value_enum();
     /// let res = builder.build_landing_pad(exception_type, personality_function, &[clause], false, "res");
     /// ```
-    /// 
+    ///
     /// * **filter**: A filter clause encodes that only some types of exceptions are valid at this
     /// point. A filter clause is made by constructing a clause from a constant array.
-    /// 
+    ///
     /// ```no_run
     /// use inkwell::context::Context;
     /// use inkwell::module::Linkage;
@@ -400,12 +400,12 @@ impl<'ctx> Builder<'ctx> {
     /// let context = Context::create();
     /// let module = context.create_module("sum");
     /// let builder = context.create_builder();
-    /// 
+    ///
     /// // type of an exception in C++
     /// let i8_ptr_type = context.i8_type().ptr_type(AddressSpace::Generic);
     /// let i32_type = context.i32_type();
     /// let exception_type = context.struct_type(&[i8_ptr_type.into(), i32_type.into()], false);
-    /// 
+    ///
     /// // the personality function used by C++
     /// let personality_function = {
     ///     let name = "__gxx_personality_v0";
@@ -413,11 +413,11 @@ impl<'ctx> Builder<'ctx> {
     ///
     ///     module.add_function(name, context.i64_type().fn_type(&[], false), linkage)
     /// };
-    /// 
+    ///
     /// // link in the C++ type info for the `int` type
     /// let type_info_int = module.add_global(i8_ptr_type, Some(AddressSpace::Generic), "_ZTIi");
     /// type_info_int.set_linkage(Linkage::External);
-    /// 
+    ///
     /// // make the filter landing pad
     /// let filter_pattern = i8_ptr_type.const_array(&[type_info_int.as_any_value_enum().into_pointer_value()]);
     /// let res = builder.build_landing_pad(exception_type, personality_function, &[filter_pattern.into()], false, "res");
@@ -464,8 +464,8 @@ impl<'ctx> Builder<'ctx> {
 
     /// Resume propagation of an existing (in-flight) exception whose unwinding was interrupted with a landingpad instruction.
     ///
-    /// This example uses a cleanup landing pad. A cleanup is extra code that needs to be run when 
-    /// unwinding a scope. C++ destructors are a typical example. In a language with reference counting, 
+    /// This example uses a cleanup landing pad. A cleanup is extra code that needs to be run when
+    /// unwinding a scope. C++ destructors are a typical example. In a language with reference counting,
     /// the cleanup block can decrement the refcount of values in scope.
     ///
     /// ```no_run
@@ -664,7 +664,7 @@ impl<'ctx> Builder<'ctx> {
     // tricky with VoidType since it has no instance value?
     // TODOC: Phi Instruction(s) must be first instruction(s) in a BasicBlock.
     // REVIEW: Not sure if we can enforce the above somehow via types.
-    pub fn build_phi<T: BasicType<'ctx>>(&self, type_: T, name: &str) -> PhiValue<'ctx> {
+    pub fn build_phi<T: AsTypeRef>(&self, type_: T, name: &str) -> PhiValue<'ctx> {
         let c_string = to_c_str(name);
         let value = unsafe {
             LLVMBuildPhi(self.builder, type_.as_type_ref(), c_string.as_ptr())

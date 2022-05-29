@@ -23,7 +23,7 @@ mod vec_type;
 mod void_type;
 
 pub use crate::types::array_type::ArrayType;
-pub use crate::types::enums::{AnyTypeEnum, BasicTypeEnum, BasicMetadataTypeEnum};
+pub use crate::types::enums::{AnyTypeEnum, BasicTypeEnum, BasicMetadataTypeEnum, RetTypeEnum};
 pub use crate::types::float_type::FloatType;
 pub use crate::types::fn_type::FunctionType;
 pub use crate::types::int_type::{IntType, StringRadix};
@@ -54,7 +54,7 @@ use crate::values::IntValue;
 // Worth noting that types seem to be singletons. At the very least, primitives are.
 // Though this is likely only true per thread since LLVM claims to not be very thread-safe.
 #[derive(PartialEq, Eq, Clone, Copy)]
-struct Type<'ctx> {
+pub(crate) struct Type<'ctx> {
     ty: LLVMTypeRef,
     _marker: PhantomData<&'ctx ()>,
 }

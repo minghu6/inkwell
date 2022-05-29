@@ -9,7 +9,7 @@ use crate::types::enums::BasicMetadataTypeEnum;
 /// useful as a function return type.
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct VoidType<'ctx> {
-    void_type: Type<'ctx>,
+    pub(crate) void_type: Type<'ctx>,
 }
 
 impl<'ctx> VoidType<'ctx> {

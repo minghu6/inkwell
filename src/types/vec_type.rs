@@ -10,7 +10,7 @@ use crate::types::enums::BasicMetadataTypeEnum;
 /// A `VectorType` is the type of a multiple value SIMD constant or variable.
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct VectorType<'ctx> {
-    vec_type: Type<'ctx>,
+    pub(crate) vec_type: Type<'ctx>,
 }
 
 impl<'ctx> VectorType<'ctx> {

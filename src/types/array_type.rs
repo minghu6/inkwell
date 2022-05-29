@@ -11,7 +11,7 @@ use crate::types::enums::BasicMetadataTypeEnum;
 /// An `ArrayType` is the type of contiguous constants or variables.
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct ArrayType<'ctx> {
-    array_type: Type<'ctx>,
+    pub(crate) array_type: Type<'ctx>,
 }
 
 impl<'ctx> ArrayType<'ctx> {

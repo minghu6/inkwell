@@ -101,6 +101,19 @@ enum_type_set! {
         MetadataType,
     }
 }
+enum_type_set! {
+    /// AnyTypeEnum exclude FunctionType
+    RetTypeEnum: {
+        ArrayType,
+        FloatType,
+        IntType,
+        PointerType,
+        StructType,
+        VectorType,
+        VoidType,
+    }
+}
+
 
 impl<'ctx> BasicMetadataTypeEnum<'ctx> {
     pub fn into_array_type(self) -> ArrayType<'ctx> {
@@ -462,6 +475,23 @@ impl<'ctx> BasicTypeEnum<'ctx> {
     }
 }
 
+impl<'ctx> RetTypeEnum<'ctx> {
+    pub fn fn_type(&self, param_types: &[BasicMetadataTypeEnum<'ctx>], is_var_args: bool) -> FunctionType<'ctx> {
+        let ty = match self {
+            Self::ArrayType(ty) => ty.array_type,
+            Self::FloatType(ty) => ty.float_type,
+            Self::IntType(ty) => ty.int_type,
+            Self::PointerType(ty) => ty.ptr_type,
+            Self::StructType(ty) => ty.struct_type,
+            Self::VectorType(ty) => ty.vec_type,
+            Self::VoidType(ty) => ty.void_type,
+        };
+
+        ty.fn_type(param_types, is_var_args)
+    }
+}
+
+
 impl<'ctx> TryFrom<AnyTypeEnum<'ctx>> for BasicTypeEnum<'ctx> {
     type Error = ();
 
@@ -488,5 +518,34 @@ impl<'ctx> From<BasicTypeEnum<'ctx>> for BasicMetadataTypeEnum<'ctx> {
             BasicTypeEnum::StructType(st) => st.into(),
             BasicTypeEnum::VectorType(vt) => vt.into(),
         }
+    }
+}
+
+impl<'ctx> From<BasicTypeEnum<'ctx>> for AnyTypeEnum<'ctx> {
+    fn from(value: BasicTypeEnum<'ctx>) -> Self {
+        match value {
+            BasicTypeEnum::ArrayType(at) => at.into(),
+            BasicTypeEnum::FloatType(ft) => ft.into(),
+            BasicTypeEnum::IntType(it) => it.into(),
+            BasicTypeEnum::PointerType(pt) => pt.into(),
+            BasicTypeEnum::StructType(st) => st.into(),
+            BasicTypeEnum::VectorType(vt) => vt.into(),
+        }
+    }
+}
+
+impl<'ctx> TryFrom<RetTypeEnum<'ctx>> for BasicMetadataTypeEnum<'ctx> {
+    type Error = ();
+
+    fn try_from(value: RetTypeEnum<'ctx>) -> Result<Self, Self::Error> {
+        Ok(match value {
+            RetTypeEnum::ArrayType(at) => at.into(),
+            RetTypeEnum::FloatType(ft) => ft.into(),
+            RetTypeEnum::IntType(it) => it.into(),
+            RetTypeEnum::PointerType(pt) => pt.into(),
+            RetTypeEnum::StructType(st) => st.into(),
+            RetTypeEnum::VectorType(vect) => vect.into(),
+            RetTypeEnum::VoidType(_) => return Err(()),
+        })
     }
 }

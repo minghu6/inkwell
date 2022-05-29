@@ -12,7 +12,7 @@ use crate::types::enums::BasicMetadataTypeEnum;
 /// A `FloatType` is the type of a floating point constant or variable.
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct FloatType<'ctx> {
-    float_type: Type<'ctx>,
+    pub(crate) float_type: Type<'ctx>,
 }
 
 impl<'ctx> FloatType<'ctx> {

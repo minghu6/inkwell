@@ -16,7 +16,7 @@ use crate::types::enums::BasicMetadataTypeEnum;
 /// A `StructType` is the type of a heterogeneous container of types.
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct StructType<'ctx> {
-    struct_type: Type<'ctx>,
+    pub(crate) struct_type: Type<'ctx>,
 }
 
 impl<'ctx> StructType<'ctx> {

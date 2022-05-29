@@ -67,7 +67,7 @@ impl StringRadix {
 /// An `IntType` is the type of an integer constant or variable.
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct IntType<'ctx> {
-    int_type: Type<'ctx>,
+    pub(crate) int_type: Type<'ctx>,
 }
 
 impl<'ctx> IntType<'ctx> {

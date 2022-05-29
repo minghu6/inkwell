@@ -13,7 +13,7 @@ use crate::types::enums::BasicMetadataTypeEnum;
 /// A `PointerType` is the type of a pointer constant or variable.
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct PointerType<'ctx> {
-    ptr_type: Type<'ctx>,
+    pub(crate) ptr_type: Type<'ctx>,
 }
 
 impl<'ctx> PointerType<'ctx> {
