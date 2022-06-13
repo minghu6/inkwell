@@ -60,7 +60,7 @@ impl<'ctx> Builder<'ctx> {
     /// builder.position_at_end(entry);
     /// builder.build_return(Some(&i32_arg));
     /// ```
-    pub fn build_return(&self, value: Option<&dyn BasicValue<'ctx>>) -> InstructionValue<'ctx> {
+    pub fn build_return<T: AsValueRef>(&self, value: Option<T>) -> InstructionValue<'ctx> {
         let value = unsafe {
             value.map_or_else(|| LLVMBuildRetVoid(self.builder), |value| LLVMBuildRet(self.builder, value.as_value_ref()))
         };
@@ -747,7 +747,7 @@ impl<'ctx> Builder<'ctx> {
     }
 
     // TODOC: Stack allocation
-    pub fn build_alloca<T: BasicType<'ctx>>(&self, ty: T, name: &str) -> PointerValue<'ctx> {
+    pub fn build_alloca<T: AsTypeRef>(&self, ty: T, name: &str) -> PointerValue<'ctx> {
         let c_string = to_c_str(name);
         let value = unsafe {
             LLVMBuildAlloca(self.builder, ty.as_type_ref(), c_string.as_ptr())
